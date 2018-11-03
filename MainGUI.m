@@ -126,7 +126,7 @@ if ~isequal(name_file1,0)
        if meanF<meanT
            set(handles.txt_kesimpulan, 'String', 'Ayam Tiren');
        else
-           set(handles.txt_kesimpulan, 'String', 'Ayam Normal');
+           set(handles.txt_kesimpulan, 'String', 'Ayam Segar');
        end
        
     else
@@ -154,7 +154,7 @@ function btn_ayam_tiren_Callback(hObject, eventdata, handles)
 folder_name = uigetdir('','Pilih Folder Gambar Ayam Tiren');
 if ~isequal(folder_name,0)
     samplingF(folder_name);
-    
+    f = msgbox('Training gambar ayam tiren selesai!');
 else
     return;
 end
@@ -165,10 +165,10 @@ function btn_ayam_segar_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_ayam_segar (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-folder_name = uigetdir('','Pilih Folder Gambar Ayam Normal');
+folder_name = uigetdir('','Pilih Folder Gambar Ayam Segar');
 if ~isequal(folder_name,0)
     samplingT(folder_name);
-    
+    f = msgbox('Training gambar ayam segar selesai!');
 else
     return;
 end
