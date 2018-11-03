@@ -1,5 +1,6 @@
-function [res,f] = TDistribusiFrekuensi(x,k)
+function [res,fr] = TDistribusiFrekuensi(x,k)
     
+    format short g;
     n=size(x,1);
     x_min = min(x);
     x_max = max(x);
@@ -12,24 +13,26 @@ function [res,f] = TDistribusiFrekuensi(x,k)
         interval(q) = x_min +(q-1)*i;
     end
     
-    %MEDIAN
+    %INIT F
     for q=1:k
-       m(q) = interval(q)+0.5*1;
        f(q) = 0;
     end
     
 	%FREKUENSI
     for p=1 : n
+        
        for q = 1 : k
+           
            if x(p) >= interval(q) && x(p) < interval(q+1)
                f(q)=f(q)+1;
            end
+           
        end
     end
     
-    %FREKUENSI RELATIF
+    %FREKUENSI RELATIF on percent
     for q=1 : k
-        fr(q)= f(q)/n;
+        fr(q)= f(q)/n * 100;
     end
     
     fk=zeros;
@@ -41,10 +44,10 @@ function [res,f] = TDistribusiFrekuensi(x,k)
     
     %parse table [interval, m, f, fr, fk]
     %ubah ke dalam bentuk matrix
-    res =  [interval(1) m(1) f(1) fr(1) fk(1)];
+    res =  [interval(1) f(1) fr(1) fk(1)];
     n = size(interval,2)-1;
     for y = 2 : n
-        res =  [res; interval(y) m(y) f(y) fr(y) fk(y)];
+        res =  [res; interval(y) f(y) fr(y) fk(y)];
     end    
     
 return

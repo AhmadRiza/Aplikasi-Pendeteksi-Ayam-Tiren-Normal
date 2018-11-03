@@ -139,6 +139,9 @@ if ~isequal(name_file1,0)
     
     if exist('fTotalF','var') && exist('fTotalT','var')
        
+       mseTiren = MeanSquareE(fTotalF, fr);
+       mseSegar = MeanSquareE(fTotalT, fr);
+       
        mseTirenTotal = zeros(2);
        mseSegarTotal = zeros(2);
        tiren = 0;
@@ -190,12 +193,17 @@ if ~isequal(name_file1,0)
        elseif segar>tiren
            set(handles.txt_kesimpulan, 'String', 'Ayam Segar');
        else
-           %sama
-            if sum(mseSegarTotal)>sum(mseTirenTotal)
-               set(handles.txt_kesimpulan, 'String', 'Ayam Tiren');
-            else
-               set(handles.txt_kesimpulan, 'String', 'Ayam Segar');
+           %sama 
+           totalTiren = 0;
+           total
+            for i=1:2
+                
+                for j=1:2
+                
+                    
+                end
             end
+           
        end
        
     else

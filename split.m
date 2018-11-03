@@ -1,7 +1,6 @@
 % membagi gambar menjadi 4 bagian
-function result = split(rgbImg)
+function result = split(grayImg)
 
-grayImg = rgb2gray(rgbImg);
 
 s = size(grayImg);
 
