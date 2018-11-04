@@ -100,9 +100,9 @@ if ~isequal(name_file1,0)
     guidata(hObject,handles);
     
     %table
-    [b k] = size(gray);
+    [b ,k] = size(gray);
     dataVector=reshape(gray,b*k,1);
-    [dataTable,fr] = TDistribusiFrekuensi(dataVector,6);
+    [dataTable,~] = TDistribusiFrekuensi(dataVector,6);
     set(handles.tbl_tdf, 'Data', dataTable);
     
     %splitt image
@@ -129,7 +129,8 @@ if ~isequal(name_file1,0)
     %end of splitting image
     
     
-    %todo testng
+    %testing splitted image
+    %check if user trained
     if exist('sampleT.mat', 'file') && exist('sampleF.mat', 'file')
         load('sampleT.mat');
         load('sampleF.mat');
@@ -137,10 +138,17 @@ if ~isequal(name_file1,0)
         set(handles.txt_kesimpulan, 'String', 'Lakukan training dahulu!');
     end
     
+    %checkif train data valid
     if exist('fTotalF','var') && exist('fTotalT','var')
        
-       mseTirenTotal = zeros(2);
-       mseSegarTotal = zeros(2);
+       %set table sample
+       set(handles.tblSampleTiren, 'Data', fTotalF);
+       set(handles.tblSampleSegar, 'Data', fTotalT);     
+       
+       %end
+        
+       mseTirenTotal = zeros;
+       mseSegarTotal = zeros;
        tiren = 0;
        segar = 0;
        %per- split image test
@@ -153,9 +161,16 @@ if ~isequal(name_file1,0)
                 mseTir = MeanSquareE(fTotalF, fr);
                 mseSeg = MeanSquareE(fTotalT, fr);
                 
-                mseTirenTotal(i,j) = mseTir;
-                mseSegarTotal(i,j) = mseSeg;
+                %save result for table
+                if i==1 && j==1
+                    mseTirenTotal = mseTir;
+                    mseSegarTotal = mseSeg;
+                else
+                    mseTirenTotal = [mseTirenTotal;mseTir];
+                    mseSegarTotal = [mseSegarTotal;mseSeg];
+                end
                 
+                %decide each image
                 if mseSeg>mseTir
                    kesimpulan = 'Tiren';
                    tiren = tiren +1;
@@ -180,8 +195,12 @@ if ~isequal(name_file1,0)
        %end
        
        %estimating
-       format short g;
-       TableDataMse = [mseSegarTotal;mseTirenTotal];
+       %formatting data into table
+       format shortG;
+       
+       TableDataMse = [mseSegarTotal,mseTirenTotal];
+       TableDataMse = [TableDataMse;sum(mseSegarTotal),sum(mseTirenTotal)]
+       %end formatting
        
        set(handles.tableMSE, 'Data', TableDataMse);
        
