@@ -199,7 +199,7 @@ if ~isequal(name_file1,0)
        format shortG;
        
        TableDataMse = [mseSegarTotal,mseTirenTotal];
-       TableDataMse = [TableDataMse;sum(mseSegarTotal),sum(mseTirenTotal)]
+       TableDataMse = [TableDataMse;sum(mseSegarTotal),sum(mseTirenTotal)];
        %end formatting
        
        set(handles.tableMSE, 'Data', TableDataMse);
