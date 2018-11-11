@@ -2,10 +2,7 @@
 function result = split(grayImg)
 
 
-s = size(grayImg);
-
-row = s(1);
-col = s(2);
+[row, col] = size(grayImg);
 
 a = ceil(row/2);
 b =  row-a;

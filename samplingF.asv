@@ -9,6 +9,7 @@ imagefiles = dir(directories);
 nfiles = length(imagefiles);    % Number of files found
 
 f = zeros;
+sumF = 0;
 for ii=1:nfiles
    currentfilename = imagefiles(ii).name;
    currentfilename = strcat(folder,'/',currentfilename);
@@ -20,6 +21,8 @@ for ii=1:nfiles
    
    %ambil f
    [~, current_f] = TDistribusiFrekuensi(dataV,6);
+   
+   %sum the F
    
    %simpan f ke array
    if ii==1
@@ -33,7 +36,8 @@ end
 if size(f,1)==1
     fTotalF = f;
 else
-    fTotalF = rata(f);
+    %fTotalF = mean(f);
+    fTotalF = f/nfiles;
 end
 
 

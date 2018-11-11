@@ -93,15 +93,14 @@ if ~isequal(name_file1,0)
     imshow(handles.data1);
     %grayscale
     image1 = handles.data1;
-    gray = rgb2gray(image1);
+    gray = convert2gray(image1);
     axes(handles.image_gs);
     imshow(gray);
     handles.data2 = gray;
     guidata(hObject,handles);
     
     %table
-    [b ,k] = size(gray);
-    dataVector=reshape(gray,b*k,1);
+    dataVector=gray(:);
     [dataTable,~] = TDistribusiFrekuensi(dataVector,6);
     set(handles.tbl_tdf, 'Data', dataTable);
     
@@ -155,8 +154,7 @@ if ~isequal(name_file1,0)
        for i =1: 2
            for j =1 : 2
                 curGray = splitImage{i, j}; 
-                [r,c] = size(curGray);
-                dataVector=reshape(curGray, r*c,1);
+                dataVector=curGray(:);
                 [~,fr] = TDistribusiFrekuensi(dataVector,6);
                 mseTir = MeanSquareE(fTotalF, fr);
                 mseSeg = MeanSquareE(fTotalT, fr);

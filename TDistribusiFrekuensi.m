@@ -1,9 +1,8 @@
 function [res,fr] = TDistribusiFrekuensi(x,k)
     
-    format short g;
     n=size(x,1);
-    x_min = min(x);
-    x_max = max(x);
+    x_min = nilaiMin(x);
+    x_max = nilaiMax(x);
     R = x_max-x_min;
     i=ceil((R/k)+0.000001);
     

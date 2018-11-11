@@ -14,9 +14,10 @@ for ii=1:nfiles
    currentfilename = strcat(folder,'/',currentfilename);
    %read current image
    RGB = imread(currentfilename);
-   gray = rgb2gray(RGB);
-   [b, k] = size(gray);
-   dataV=reshape(gray,b*k,1);
+   gray = convert2gray(RGB);
+   
+   %convert to 1 col
+   dataV=gray(:);
    
    %ambil f
    [~, current_f] = TDistribusiFrekuensi(dataV,6);
@@ -29,11 +30,12 @@ for ii=1:nfiles
    end
    
 end
+
 %jika cuma satu
 if size(f,1)==1
     fTotalT = f;
 else
-    fTotalT = mean(f);
+    fTotalT = rata(f);
 end
 
 
