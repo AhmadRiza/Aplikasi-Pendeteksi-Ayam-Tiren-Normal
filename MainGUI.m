@@ -22,7 +22,7 @@ function varargout = MainGUI(varargin)
 
 % Edit the above text to modify the response to help MainGUI
 
-% Last Modified by GUIDE v2.5 06-Dec-2017 06:52:06
+% Last Modified by GUIDE v2.5 22-Nov-2018 18:03:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,6 +57,8 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
+
+
 
 % UIWAIT makes MainGUI wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -101,122 +103,32 @@ if ~isequal(name_file1,0)
     
     %table
     dataVector=gray(:);
-    [dataTable,~] = TDistribusiFrekuensi(dataVector,6);
+    [dataTable,dataUji] = TDistribusiFrekuensi(dataVector,6);
     set(handles.tbl_tdf, 'Data', dataTable);
-    
-    %splitt image
-    splitImage = split(gray);
-    
-    axes(handles.img1);
-    image1 = splitImage{1,1};
-    imshow(image1);
-    
-    axes(handles.img2);
-    image2 = splitImage{1,2};
-    imshow(image2);
-    
-    
-    axes(handles.img3);
-    image3 = splitImage{2,1};
-    imshow(image3);
-    
-    
-    axes(handles.img4);
-    image4 = splitImage{2,2};
-    imshow(image4);
-    
-    %end of splitting image
-    
-    
-    %testing splitted image
-    %check if user trained
-    if exist('sampleT.mat', 'file') && exist('sampleF.mat', 'file')
-        load('sampleT.mat');
-        load('sampleF.mat');
+    dataUji = dataUji(:);
+    if(exist('jst.mat','file'))
+       load('jst.mat');
     else
-        set(handles.txt_kesimpulan, 'String', 'Lakukan training dahulu!');
+        msgbox('Lakukan training dulu!');
     end
     
-    %checkif train data valid
-    if exist('fTotalF','var') && exist('fTotalT','var')
-       
-       %set table sample
-       set(handles.tblSampleTiren, 'Data', fTotalF);
-       set(handles.tblSampleSegar, 'Data', fTotalT);     
-       
-       %end
+    if(exist('jst','var'))
         
-       mseTirenTotal = zeros;
-       mseSegarTotal = zeros;
-       tiren = 0;
-       segar = 0;
-       %per- split image test
-       for i =1: 2
-           for j =1 : 2
-                curGray = splitImage{i, j}; 
-                dataVector=curGray(:);
-                [~,fr] = TDistribusiFrekuensi(dataVector,6);
-                mseTir = MeanSquareE(fTotalF, fr);
-                mseSeg = MeanSquareE(fTotalT, fr);
-                
-                %save result for table
-                if i==1 && j==1
-                    mseTirenTotal = mseTir;
-                    mseSegarTotal = mseSeg;
-                else
-                    mseTirenTotal = [mseTirenTotal;mseTir];
-                    mseSegarTotal = [mseSegarTotal;mseSeg];
-                end
-                
-                %decide each image
-                if mseSeg>mseTir
-                   kesimpulan = 'Tiren';
-                   tiren = tiren +1;
-                else
-                    kesimpulan = 'Segar';
-                    segar = segar+1;
-                end
-
-                if i==1 && j==1
-                    set(handles.txtimg1, 'String', kesimpulan);
-                elseif i ==1 && j==2
-                    set(handles.txtimg2, 'String', kesimpulan);
-                elseif i ==2 && j==1
-                    set(handles.txtimg3, 'String', kesimpulan);
-                elseif i ==2 && j==2
-                    set(handles.txtimg4, 'String', kesimpulan);
-                end
-           end
-            
-       end
-       
-       %end
-       
-       %estimating
-       %formatting data into table
-       format shortG;
-       
-       TableDataMse = [mseSegarTotal,mseTirenTotal];
-       TableDataMse = [TableDataMse;sum(mseSegarTotal),sum(mseTirenTotal)];
-       %end formatting
-       
-       set(handles.tableMSE, 'Data', TableDataMse);
-       
-       if tiren>segar
-           set(handles.txt_kesimpulan, 'String', 'Ayam Tiren');
-       elseif segar>tiren
+        batasBawah = 0.001;
+        batasAtas = 1 - batasBawah;
+        hasilUji = sim(jst, dataUji)
+        % 0 1
+        if(hasilUji>batasAtas)
            set(handles.txt_kesimpulan, 'String', 'Ayam Segar');
-       else
-           %sama
-            if sum(mseSegarTotal)>sum(mseTirenTotal)
-               set(handles.txt_kesimpulan, 'String', 'Ayam Tiren');
-            else
-               set(handles.txt_kesimpulan, 'String', 'Ayam Segar');
-            end
-       end
-       
+        % 1 0
+        elseif (hasilUji<batasBawah)
+            set(handles.txt_kesimpulan, 'String', 'Ayam Tiren');
+        else
+            set(handles.txt_kesimpulan, 'String', 'Tidak diketahui');
+        end
+        
     else
-        set(handles.txt_kesimpulan, 'String', 'Lakukan training dahulu!');
+        msgbox('Lakukan training dulu!');
     end
     
 else
@@ -239,8 +151,8 @@ function btn_ayam_tiren_Callback(hObject, eventdata, handles)
 
 folder_name = uigetdir('','Pilih Folder Gambar Ayam Tiren');
 if ~isequal(folder_name,0)
-    samplingF(folder_name);
-    f = msgbox('Training gambar ayam tiren selesai!');
+    samplingTirenJST(folder_name);
+    msgbox('Folder gambar ayam tiren dipilih!');
 else
     return;
 end
@@ -253,8 +165,8 @@ function btn_ayam_segar_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 folder_name = uigetdir('','Pilih Folder Gambar Ayam Segar');
 if ~isequal(folder_name,0)
-    samplingT(folder_name);
-    f = msgbox('Training gambar ayam segar selesai!');
+    samplingSegarJST(folder_name);
+    msgbox('Folder gambar ayam segar dipilih!');
 else
     return;
 end
@@ -275,3 +187,38 @@ function btn_openimg_KeyPressFcn(hObject, eventdata, handles)
 %	Character: character interpretation of the key(s) that was pressed
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in btn_latih_jst.
+function btn_latih_jst_Callback(hObject, eventdata, handles)
+     
+% hObject    handle to btn_latih_jst (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    if exist('sampleTirenAI.mat', 'file') && exist('sampleSegarAI.mat', 'file')&& exist('targetTirenAI.mat', 'file')&& exist('targetSegarAI.mat', 'file') 
+            load('sampleTirenAI.mat');
+            load('sampleSegarAI.mat');
+            load('targetTirenAI.mat');
+            load('targetSegarAI.mat');
+    else
+        msgbox('Pilih Folder Training dulu!');
+    end
+
+    %checkif train data valid
+    if exist('dataLatihSegar','var') && exist('dataLatihTiren','var')&& exist('targetTiren','var')&& exist('targetSegar','var')
+        
+        dataLatih = [dataLatihSegar,dataLatihTiren];
+        target = [targetSegar,targetTiren];
+        
+        jst = newff(minmax(dataLatih),[50,1],{'logsig','logsig'},'traincgp');
+        init(jst);
+        jst.trainParam.epochs = 100000;
+        jst.trainParam.goal = 0.0000001;
+        tic;
+        jst = train(jst,dataLatih,target);
+        msgbox(strcat('Training selesai dengan waktu ',num2str(toc),' ms'));
+        
+        hasil = sim(jst, dataLatih)
+        save jst jst;
+    end
+
